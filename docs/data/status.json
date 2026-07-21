@@ -1,0 +1,23 @@
+{
+  "generatedAt": "2026-07-21T17:02:02.001Z",
+  "sites": [
+    {
+      "name": "Example",
+      "url": "https://example.com",
+      "slug": "example",
+      "timestamp": "2026-07-21T17:02:02.597Z",
+      "status": "up",
+      "httpCode": 200,
+      "responseTimeMs": 579
+    },
+    {
+      "name": "GitHub",
+      "url": "https://github.com",
+      "slug": "github",
+      "timestamp": "2026-07-21T17:02:02.972Z",
+      "status": "up",
+      "httpCode": 200,
+      "responseTimeMs": 371
+    }
+  ]
+}

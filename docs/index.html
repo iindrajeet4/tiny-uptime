@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>tiny-uptime · Status</title>
+<style>
+  :root {
+    --bg: #f4f6f8;
+    --card: #ffffff;
+    --text: #1a2330;
+    --muted: #5b6675;
+    --border: #e2e7ee;
+    --up: #16a34a;
+    --up-bg: #dcfce7;
+    --down: #dc2626;
+    --down-bg: #fee2e2;
+    --bar-empty: #e2e7ee;
+    --accent: #2563eb;
+  }
+  [data-theme="dark"] {
+    --bg: #0d1117;
+    --card: #161b22;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --border: #30363d;
+    --up: #3fb950;
+    --up-bg: rgba(63,185,80,.15);
+    --down: #f85149;
+    --down-bg: rgba(248,81,73,.15);
+    --bar-empty: #30363d;
+    --accent: #58a6ff;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans Thai", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    transition: background .2s, color .2s;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 24px 16px 48px; }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 12px; margin-bottom: 8px;
+  }
+  h1 { font-size: 1.35rem; margin: 0; letter-spacing: -.01em; }
+  .controls { display: flex; gap: 8px; }
+  .btn {
+    background: var(--card); color: var(--text);
+    border: 1px solid var(--border); border-radius: 8px;
+    padding: 6px 12px; font-size: .85rem; cursor: pointer;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .subtitle { color: var(--muted); font-size: .85rem; margin: 0 0 24px; }
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 12px; padding: 18px 20px; margin-bottom: 16px;
+  }
+  .card-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  .site-name { font-weight: 600; font-size: 1.05rem; }
+  .site-url { color: var(--muted); font-size: .8rem; text-decoration: none; word-break: break-all; }
+  .site-url:hover { color: var(--accent); }
+  .badge {
+    font-size: .75rem; font-weight: 700; padding: 3px 10px;
+    border-radius: 999px; letter-spacing: .05em;
+  }
+  .badge.up { color: var(--up); background: var(--up-bg); }
+  .badge.down { color: var(--down); background: var(--down-bg); }
+  .metrics {
+    display: flex; gap: 24px; flex-wrap: wrap; margin: 14px 0 12px;
+  }
+  .metric .label { font-size: .7rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; }
+  .metric .value { font-size: 1.05rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .bars { display: flex; gap: 2px; height: 26px; align-items: stretch; }
+  .bar {
+    flex: 1; max-width: 8px; border-radius: 2px; background: var(--bar-empty);
+  }
+  .bar.up { background: var(--up); }
+  .bar.down { background: var(--down); }
+  .bars-caption { display: flex; justify-content: space-between; font-size: .7rem; color: var(--muted); margin-top: 4px; }
+  .overall {
+    display: flex; align-items: center; gap: 10px;
+    font-weight: 600; font-size: 1rem;
+  }
+  .overall .dot {
+    width: 12px; height: 12px; border-radius: 50%; flex: none;
+  }
+  .overall.ok .dot { background: var(--up); box-shadow: 0 0 0 4px var(--up-bg); }
+  .overall.bad .dot { background: var(--down); box-shadow: 0 0 0 4px var(--down-bg); }
+  .empty {
+    text-align: center; padding: 48px 24px; color: var(--muted);
+  }
+  .empty code { background: var(--bar-empty); padding: 2px 6px; border-radius: 4px; }
+  footer { text-align: center; color: var(--muted); font-size: .75rem; margin-top: 32px; }
+  footer a { color: var(--accent); text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 data-i18n="title">Service Status</h1>
+    <div class="controls">
+      <button class="btn" id="langBtn" title="Language">EN / ไทย</button>
+      <button class="btn" id="themeBtn" title="Theme">◐</button>
+    </div>
+  </header>
+  <p class="subtitle" id="updatedAt"></p>
+  <div class="card overall" id="overall" hidden><span class="dot"></span><span class="msg"></span></div>
+  <div id="sites"></div>
+  <footer>
+    tiny-uptime — <span data-i18n="footer">powered by GitHub Actions &amp; Pages</span> ·
+    <span data-i18n="inspired">inspired by</span> <a href="https://github.com/upptime/upptime" rel="noopener">Upptime</a>
+  </footer>
+</div>
+
+<script>
+"use strict";
+
+const I18N = {
+  en: {
+    title: "Service Status",
+    footer: "powered by GitHub Actions & Pages",
+    inspired: "inspired by",
+    up: "UP", down: "DOWN",
+    responseTime: "Response time",
+    uptime24h: "Uptime 24h",
+    uptime7d: "Uptime 7d",
+    lastChecked: "Last updated",
+    siteChecked: "Last checked",
+    allUp: "All systems operational",
+    someDown: "service(s) down",
+    recentChecks: "recent checks",
+    oldest: "older", newest: "latest",
+    noData: "No data yet",
+    noDataHelp: "Once the repository is on GitHub with Actions enabled, the uptime workflow will run every 10 minutes and populate this page. You can also trigger it manually from the Actions tab (\"Run workflow\"). Make sure GitHub Pages is set to serve from the /docs folder.",
+    loadError: "Could not load status data.",
+  },
+  th: {
+    title: "สถานะบริการ",
+    footer: "ขับเคลื่อนด้วย GitHub Actions และ Pages",
+    inspired: "ได้แรงบันดาลใจจาก",
+    up: "ปกติ", down: "ล่ม",
+    responseTime: "เวลาตอบสนอง",
+    uptime24h: "อัปไทม์ 24 ชม.",
+    uptime7d: "อัปไทม์ 7 วัน",
+    lastChecked: "อัปเดตล่าสุด",
+    siteChecked: "ตรวจสอบล่าสุด",
+    allUp: "ทุกระบบทำงานปกติ",
+    someDown: "บริการล่ม",
+    recentChecks: "การตรวจสอบล่าสุด",
+    oldest: "เก่ากว่า", newest: "ล่าสุด",
+    noData: "ยังไม่มีข้อมูล",
+    noDataHelp: "เมื่อ repository อยู่บน GitHub และเปิดใช้งาน Actions แล้ว workflow จะทำงานทุก 10 นาทีและแสดงข้อมูลที่หน้านี้ สามารถสั่งรันเองได้จากแท็บ Actions (\"Run workflow\") และตั้งค่า GitHub Pages ให้เสิร์ฟจากโฟลเดอร์ /docs",
+    loadError: "โหลดข้อมูลสถานะไม่สำเร็จ",
+  },
+};
+
+let lang = localStorage.getItem("tu-lang") || "en";
+let theme = localStorage.getItem("tu-theme") ||
+  (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+
+function t(key) { return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || key; }
+
+function applyTheme() {
+  document.documentElement.setAttribute("data-theme", theme);
+  document.getElementById("themeBtn").textContent = theme === "dark" ? "☀" : "☾";
+}
+function applyStaticI18n() {
+  document.documentElement.lang = lang;
+  document.querySelectorAll("[data-i18n]").forEach((el) => {
+    el.textContent = t(el.getAttribute("data-i18n"));
+  });
+}
+
+document.getElementById("themeBtn").addEventListener("click", () => {
+  theme = theme === "dark" ? "light" : "dark";
+  localStorage.setItem("tu-theme", theme);
+  applyTheme();
+});
+document.getElementById("langBtn").addEventListener("click", () => {
+  lang = lang === "en" ? "th" : "en";
+  localStorage.setItem("tu-lang", lang);
+  applyStaticI18n();
+  render();
+});
+
+let statusData = null;
+const histories = {}; // slug -> array
+
+function uptimePct(history, hours) {
+  const cutoff = Date.now() - hours * 3600 * 1000;
+  const window_ = history.filter((h) => new Date(h.timestamp).getTime() >= cutoff);
+  if (window_.length === 0) return null;
+  const up = window_.filter((h) => h.status === "up").length;
+  return (up / window_.length) * 100;
+}
+
+function fmtPct(p) { return p === null ? "—" : p.toFixed(p >= 99.95 ? 0 : 2) + "%"; }
+
+function render() {
+  const container = document.getElementById("sites");
+  const updated = document.getElementById("updatedAt");
+  const overall = document.getElementById("overall");
+  container.innerHTML = "";
+
+  if (!statusData || !Array.isArray(statusData.sites) || statusData.sites.length === 0) {
+    updated.textContent = "";
+    overall.hidden = true;
+    const div = document.createElement("div");
+    div.className = "card empty";
+    div.innerHTML = "<h2></h2><p></p>";
+    div.querySelector("h2").textContent = t("noData");
+    div.querySelector("p").textContent = t("noDataHelp");
+    container.appendChild(div);
+    return;
+  }
+
+  const locale = lang === "th" ? "th-TH" : "en-GB";
+  updated.textContent = t("lastChecked") + ": " +
+    new Date(statusData.generatedAt).toLocaleString(locale);
+
+  const downCount = statusData.sites.filter((s) => s.status !== "up").length;
+  overall.hidden = false;
+  overall.className = "card overall " + (downCount === 0 ? "ok" : "bad");
+  overall.querySelector(".msg").textContent =
+    downCount === 0 ? t("allUp") : downCount + " " + t("someDown");
+
+  for (const site of statusData.sites) {
+    const history = histories[site.slug] || [];
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const head = document.createElement("div");
+    head.className = "card-head";
+    const left = document.createElement("div");
+    const name = document.createElement("div");
+    name.className = "site-name";
+    name.textContent = site.name;
+    const url = document.createElement("a");
+    url.className = "site-url";
+    url.href = site.url;
+    url.rel = "noopener";
+    url.textContent = site.url;
+    left.appendChild(name); left.appendChild(url);
+    const badge = document.createElement("span");
+    badge.className = "badge " + site.status;
+    badge.textContent = t(site.status);
+    head.appendChild(left); head.appendChild(badge);
+    card.appendChild(head);
+
+    const metrics = document.createElement("div");
+    metrics.className = "metrics";
+    const rows = [
+      [t("responseTime"), site.responseTimeMs + " ms"],
+      [t("uptime24h"), fmtPct(uptimePct(history, 24))],
+      [t("uptime7d"), fmtPct(uptimePct(history, 24 * 7))],
+      [t("siteChecked"), new Date(site.timestamp).toLocaleTimeString(locale)],
+    ];
+    for (const [label, value] of rows) {
+      const m = document.createElement("div");
+      m.className = "metric";
+      const l = document.createElement("div"); l.className = "label"; l.textContent = label;
+      const v = document.createElement("div"); v.className = "value"; v.textContent = value;
+      m.appendChild(l); m.appendChild(v);
+      metrics.appendChild(m);
+    }
+    card.appendChild(metrics);
+
+    // Bar strip: last 90 checks (or fewer).
+    const bars = document.createElement("div");
+    bars.className = "bars";
+    const recent = history.slice(-90);
+    const slots = 90;
+    for (let i = 0; i < slots; i++) {
+      const bar = document.createElement("div");
+      bar.className = "bar";
+      const idx = i - (slots - recent.length);
+      if (idx >= 0) {
+        const h = recent[idx];
+        bar.className += h.status === "up" ? " up" : " down";
+        bar.title = new Date(h.timestamp).toLocaleString() +
+          " — " + h.status.toUpperCase() + " (" + h.responseTimeMs + " ms)";
+      }
+      bars.appendChild(bar);
+    }
+    card.appendChild(bars);
+
+    const caption = document.createElement("div");
+    caption.className = "bars-caption";
+    caption.innerHTML = "<span></span><span></span>";
+    caption.children[0].textContent = t("oldest");
+    caption.children[1].textContent = t("newest") + " · " + recent.length + " " + t("recentChecks");
+    card.appendChild(caption);
+
+    container.appendChild(card);
+  }
+}
+
+async function load() {
+  try {
+    const res = await fetch("./data/status.json", { cache: "no-store" });
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    statusData = await res.json();
+  } catch {
+    statusData = null;
+    render();
+    return;
+  }
+  await Promise.all(
+    (statusData.sites || []).map(async (s) => {
+      try {
+        const r = await fetch("./data/history/" + s.slug + ".json", { cache: "no-store" });
+        if (r.ok) histories[s.slug] = await r.json();
+      } catch { /* history optional */ }
+    })
+  );
+  render();
+}
+
+applyTheme();
+applyStaticI18n();
+load();
+</script>
+</body>
+</html>

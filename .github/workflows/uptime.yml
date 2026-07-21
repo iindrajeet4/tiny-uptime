@@ -1,0 +1,53 @@
+name: Uptime Check
+
+on:
+  schedule:
+    # Every 10 minutes. Note: GitHub may throttle or delay scheduled runs,
+    # especially on busy periods or free-tier repos — actual interval can be
+    # 10-30+ minutes. This is normal and expected.
+    - cron: "*/10 * * * *"
+  workflow_dispatch: {}
+
+# Required so the workflow can commit updated status data back to the repo.
+permissions:
+  contents: write
+
+# Never let two runs commit at the same time.
+concurrency:
+  group: uptime-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Run uptime checks
+        env:
+          # Optional alert secrets — configure in repo Settings > Secrets.
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+          LINE_MESSAGING_TOKEN: ${{ secrets.LINE_MESSAGING_TOKEN }}
+          LINE_TO: ${{ secrets.LINE_TO }}
+        run: node check.js
+
+      - name: Commit updated status data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/data
+          if git diff --cached --quiet; then
+            echo "No changes to commit."
+          else
+            git commit -m "chore: update uptime data [skip ci]"
+            # Rebase in case another commit landed while this run was executing.
+            git pull --rebase origin "${GITHUB_REF_NAME}"
+            git push
+          fi
