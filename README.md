@@ -1,8 +1,13 @@
 # tiny-uptime
 
+[![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Status page](https://img.shields.io/badge/status%20page-live-brightgreen.svg)](https://iindrajeet4.github.io/tiny-uptime/)
+
 A lightweight, serverless uptime monitor powered entirely by **GitHub Actions** (checks) and **GitHub Pages** (status page). No servers, no databases, no dependencies.
 
 Inspired by [Upptime](https://github.com/upptime/upptime) (MIT) — this is an independent, minimal implementation; no code was copied.
+
+**[🔗 Live status page / ดูหน้าสถานะจริง](https://iindrajeet4.github.io/tiny-uptime/)** — served by GitHub Pages from the **`/docs`** folder of this repo.
 
 ## How it works
 
@@ -13,7 +18,7 @@ Inspired by [Upptime](https://github.com/upptime/upptime) (MIT) — this is an i
 
 ## Setup
 
-1. **Fork or use this repository as a template** on GitHub.
+1. **Fork [https://github.com/iindrajeet4/tiny-uptime](https://github.com/iindrajeet4/tiny-uptime) or use it as a template** on GitHub.
 2. **Edit `sites.json`** with your sites:
    ```json
    [
@@ -59,7 +64,7 @@ node check.js   # requires Node 20+
 
 ## วิธีติดตั้ง
 
-1. **Fork หรือใช้ repository นี้เป็น template** บน GitHub
+1. **Fork [https://github.com/iindrajeet4/tiny-uptime](https://github.com/iindrajeet4/tiny-uptime) หรือใช้เป็น template** บน GitHub
 2. **แก้ไข `sites.json`** ใส่เว็บไซต์ที่ต้องการตรวจสอบ
 3. **เปิดใช้งาน Actions** ที่แท็บ *Actions* และสามารถสั่งรันครั้งแรกเองได้ที่ *Uptime Check → Run workflow*
 4. **เปิดใช้งาน Pages**: *Settings → Pages → Deploy from a branch* เลือก branch หลักและโฟลเดอร์ **`/docs`**
