@@ -4,5 +4,11 @@
     "status": "up",
     "httpCode": 200,
     "responseTimeMs": 371
+  },
+  {
+    "timestamp": "2026-07-21T18:47:06.279Z",
+    "status": "up",
+    "httpCode": 200,
+    "responseTimeMs": 200
   }
 ]
