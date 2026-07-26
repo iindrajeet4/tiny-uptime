@@ -400,5 +400,11 @@
     "status": "up",
     "httpCode": 200,
     "responseTimeMs": 313
+  },
+  {
+    "timestamp": "2026-07-26T06:29:56.831Z",
+    "status": "up",
+    "httpCode": 200,
+    "responseTimeMs": 125
   }
 ]
