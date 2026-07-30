@@ -748,5 +748,11 @@
     "status": "up",
     "httpCode": 200,
     "responseTimeMs": 130
+  },
+  {
+    "timestamp": "2026-07-30T10:51:35.597Z",
+    "status": "up",
+    "httpCode": 200,
+    "responseTimeMs": 57
   }
 ]
