@@ -994,5 +994,11 @@
     "status": "up",
     "httpCode": 200,
     "responseTimeMs": 125
+  },
+  {
+    "timestamp": "2026-08-02T04:31:37.085Z",
+    "status": "up",
+    "httpCode": 200,
+    "responseTimeMs": 99
   }
 ]
