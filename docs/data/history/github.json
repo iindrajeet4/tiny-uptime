@@ -1990,5 +1990,11 @@
     "status": "up",
     "httpCode": 200,
     "responseTimeMs": 130
+  },
+  {
+    "timestamp": "2026-08-10T14:39:53.545Z",
+    "status": "up",
+    "httpCode": 200,
+    "responseTimeMs": 350
   }
 ]
