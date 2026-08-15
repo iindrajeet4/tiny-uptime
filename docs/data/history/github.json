@@ -2782,5 +2782,11 @@
     "status": "up",
     "httpCode": 200,
     "responseTimeMs": 310
+  },
+  {
+    "timestamp": "2026-08-15T12:00:00.301Z",
+    "status": "up",
+    "httpCode": 200,
+    "responseTimeMs": 131
   }
 ]
