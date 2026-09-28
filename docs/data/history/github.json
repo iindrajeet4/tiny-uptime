@@ -1,11 +1,5 @@
 [
   {
-    "timestamp": "2026-08-20T06:46:08.944Z",
-    "status": "up",
-    "httpCode": 200,
-    "responseTimeMs": 314
-  },
-  {
     "timestamp": "2026-08-20T07:27:47.784Z",
     "status": "up",
     "httpCode": 200,
@@ -2998,5 +2992,11 @@
     "status": "up",
     "httpCode": 200,
     "responseTimeMs": 30
+  },
+  {
+    "timestamp": "2026-09-28T07:31:38.466Z",
+    "status": "up",
+    "httpCode": 200,
+    "responseTimeMs": 46
   }
 ]
