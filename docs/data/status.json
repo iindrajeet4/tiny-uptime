@@ -1,23 +1,23 @@
 {
-  "generatedAt": "2026-09-29T06:48:47.759Z",
+  "generatedAt": "2026-09-29T13:22:32.252Z",
   "sites": [
     {
       "name": "Example",
       "url": "https://example.com",
       "slug": "example",
-      "timestamp": "2026-09-29T06:48:47.912Z",
+      "timestamp": "2026-09-29T13:22:32.425Z",
       "status": "up",
       "httpCode": 200,
-      "responseTimeMs": 152
+      "responseTimeMs": 172
     },
     {
       "name": "GitHub",
       "url": "https://github.com",
       "slug": "github",
-      "timestamp": "2026-09-29T06:48:48.149Z",
+      "timestamp": "2026-09-29T13:22:32.702Z",
       "status": "up",
       "httpCode": 200,
-      "responseTimeMs": 235
+      "responseTimeMs": 275
     }
   ]
 }
